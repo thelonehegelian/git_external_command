@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::process::Command;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // get git logs
     let output = Command::new("git")
         .arg("log")
@@ -24,22 +24,25 @@ fn main() {
         count += 1;
     }
 
-    /***********
-     * Method 2
-     ***********/
+    /********************************************
+     * Method 2: this diplays the commit struct
+     ********************************************/
 
-    // struct Commit {
-    //     hash: String,
-    //     message: String,
-    // }
+    #[derive(Debug)]
+    struct Commit {
+        hash: String,
+        message: String,
+    }
 
-    // String::from_utf8(output.stdout)?
-    //     .lines()
-    //     .filter_map(|line| pattern.captures(line))
-    //     .map(|cap| Commit {
-    //         hash: cap[1].to_string(),
-    //         message: cap[2].trim().to_string(),
-    //     })
-    //     .take(5)
-    //     .for_each(|x| println!("{:?}", x));
+    let pattern = Regex::new(r"([a-f0-9]{7}) (.*)")?;
+    String::from_utf8(output.stdout)?
+        .lines()
+        .filter_map(|line| pattern.captures(line))
+        .map(|cap| Commit {
+            hash: cap[1].to_string(),
+            message: cap[2].trim().to_string(),
+        })
+        .take(5)
+        .for_each(|x| println!("{:?}", x));
+    Ok(())
 }
