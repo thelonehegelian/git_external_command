@@ -14,4 +14,32 @@ fn main() {
     for cap in re.captures_iter(&String::from_utf8_lossy(&output.stdout)) {
         println!("{}: {}", &cap[1], &cap[2]);
     }
+    // loop through the git logs and get last 3 commits
+    let mut count = 0;
+    for cap in re.captures_iter(&String::from_utf8_lossy(&output.stdout)) {
+        if count == 3 {
+            break;
+        }
+        println!("{}: {}", &cap[1], &cap[2]);
+        count += 1;
+    }
+
+    /***********
+     * Method 2
+     ***********/
+
+    // struct Commit {
+    //     hash: String,
+    //     message: String,
+    // }
+
+    // String::from_utf8(output.stdout)?
+    //     .lines()
+    //     .filter_map(|line| pattern.captures(line))
+    //     .map(|cap| Commit {
+    //         hash: cap[1].to_string(),
+    //         message: cap[2].trim().to_string(),
+    //     })
+    //     .take(5)
+    //     .for_each(|x| println!("{:?}", x));
 }
